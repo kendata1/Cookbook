@@ -1,82 +1,51 @@
-async function getRecipes() {
-    const response = await fetch('http://localhost:3030/jsonstore/cookbook/recipes');
-    const recipes = await response.json();
+import createRecipe from './views/create-recipe.js';
+import login from './views/login.js';
+import register from './views/register.js';
+import catalogPage from './views/catalog.js';
+import logout from './views/logout.js';
+import homePage from './views/home.js';
 
-    return Object.values(recipes);
+const pathnameView = {
+	'/register': register,
+	'/login': login,
+	'/create': createRecipe,
+	'/catalog': catalogPage,
+	'/logout': logout,
+	'/': homePage,
+};
+
+const userNavButtonsSection = document.getElementById('user');
+const guestNavButtonsSection = document.getElementById('guest');
+document.addEventListener('DOMContentLoaded', onLoad());
+
+function onLoad() {
+	pathnameView['/']();
+	initNavigation();
+	renderNavigation();
 }
 
-async function getRecipeById(id) {
-    const response = await fetch('http://localhost:3030/jsonstore/cookbook/details/' + id);
-    const recipe = await response.json();
-
-    return recipe;
+function renderNavigation() {
+	const accessToken = sessionStorage.getItem('accessToken');
+	if (accessToken && accessToken !== 'undefined') {
+		userNavButtonsSection.style.display = 'block';
+		guestNavButtonsSection.style.display = 'none';
+	} else {
+		guestNavButtonsSection.style.display = 'block';
+		userNavButtonsSection.style.display = 'none';
+	}
 }
 
-function createRecipePreview(recipe) {
-    const result = e('article', { className: 'preview', onClick: toggleCard },
-        e('div', { className: 'title' }, e('h2', {}, recipe.name)),
-        e('div', { className: 'small' }, e('img', { src: recipe.img })),
-    );
+function initNavigation() {
+	const navElement = document.querySelector('header nav');
+	navElement.addEventListener('click', e => {
+		if (e.target.tagName !== 'A') {
+			return;
+		}
+		e.preventDefault();
+		const url = new URL(e.target.href);
+		const pathname = url.pathname;
 
-    return result;
-
-    async function toggleCard() {
-        const fullRecipe = await getRecipeById(recipe._id);
-
-        result.replaceWith(createRecipeCard(fullRecipe));
-    }
-}
-
-function createRecipeCard(recipe) {
-    const result = e('article', {},
-        e('h2', {}, recipe.name),
-        e('div', { className: 'band' },
-            e('div', { className: 'thumb' }, e('img', { src: recipe.img })),
-            e('div', { className: 'ingredients' },
-                e('h3', {}, 'Ingredients:'),
-                e('ul', {}, recipe.ingredients.map(i => e('li', {}, i))),
-            )
-        ),
-        e('div', { className: 'description' },
-            e('h3', {}, 'Preparation:'),
-            recipe.steps.map(s => e('p', {}, s))
-        ),
-    );
-
-    return result;
-}
-
-window.addEventListener('load', async () => {
-    const main = document.querySelector('main');
-
-    const recipes = await getRecipes();
-    const cards = recipes.map(createRecipePreview);
-
-    main.innerHTML = '';
-    cards.forEach(c => main.appendChild(c));
-});
-
-function e(type, attributes, ...content) {
-    const result = document.createElement(type);
-
-    for (let [attr, value] of Object.entries(attributes || {})) {
-        if (attr.substring(0, 2) == 'on') {
-            result.addEventListener(attr.substring(2).toLocaleLowerCase(), value);
-        } else {
-            result[attr] = value;
-        }
-    }
-
-    content = content.reduce((a, c) => a.concat(Array.isArray(c) ? c : [c]), []);
-
-    content.forEach(e => {
-        if (typeof e == 'string' || typeof e == 'number') {
-            const node = document.createTextNode(e);
-            result.appendChild(node);
-        } else {
-            result.appendChild(e);
-        }
-    });
-
-    return result;
+		pathnameView[pathname]();
+		renderNavigation();
+	});
 }

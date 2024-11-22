@@ -1,8 +1,9 @@
 import {html, render} from 'https://unpkg.com/lit-html';
 import page from '//unpkg.com/page/page.mjs';
+import {userApi} from '../api/user.js';
 const mainElement = document.querySelector('body main');
 
-export default function login() {
+export default function loginPage() {
 	render(template, mainElement);
 }
 
@@ -16,29 +17,5 @@ const template = html` <article id="login-article">
 </article>`;
 
 function handleLogin(e) {
-	e.preventDefault();
-	const loginUrl = 'http://localhost:3030/users/login';
-
-	const form = e.currentTarget;
-
-	const formData = new FormData(form);
-
-	fetch(loginUrl, {
-		method: 'POST',
-		body: JSON.stringify({
-			email: formData.get('email'),
-			password: formData.get('password'),
-		}),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	})
-		.then(res => res.json())
-		.then(res => {
-			console.log(res);
-			sessionStorage.setItem('accessToken', res.accessToken);
-			sessionStorage.setItem('_userId', res._id);
-			page.redirect('/');
-		})
-		.catch(err => console.log(err));
+	userApi.login(e);
 }

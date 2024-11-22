@@ -1,6 +1,6 @@
-import showDetails from './detailed.js';
 import {recipeApi} from '../api/recipe.js';
 import {html, render} from 'https://unpkg.com/lit-html';
+import page from '//unpkg.com/page/page.mjs';
 
 const mainElement = document.querySelector('body main');
 
@@ -27,5 +27,5 @@ const template = recipies => html`
 `;
 
 function detailsHandler(id) {
-	showDetails(id);
+	page.redirect(`/catalog/${id}`);
 }

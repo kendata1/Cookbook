@@ -1,6 +1,5 @@
 import {html, render} from 'https://unpkg.com/lit-html';
 import {recipeApi} from '../api/recipe.js';
-import page from '//unpkg.com/page/page.mjs';
 
 const mainElement = document.querySelector('body main');
 
@@ -33,5 +32,4 @@ const template = html`
 
 async function formSubmitHandler(e) {
 	await recipeApi.createRecipe(e);
-	page.redirect('/');
 }

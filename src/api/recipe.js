@@ -1,3 +1,5 @@
+import page from '//unpkg.com/page/page.mjs';
+
 const baseUrl = 'http://localhost:3030/data/recipes';
 const token = sessionStorage.getItem('accessToken');
 
@@ -7,12 +9,26 @@ export const recipeApi = {
 	deleteRecipe,
 	getRecipeById,
 	editRecipe,
+	getThreeMostRecentRecipies,
 };
 
 async function getRecipes() {
 	try {
 		const result = await fetch(baseUrl);
 		const data = await result.json();
+		return data;
+	} catch {
+		err => console.log(err);
+	}
+}
+
+async function getThreeMostRecentRecipies() {
+	try {
+		const result = await fetch(
+			`${baseUrl}?select=_id%2Cname%2Cimg&sortBy=_createdOn%20desc&pageSize=3`
+		);
+		const data = await result.json();
+
 		return data;
 	} catch {
 		err => console.log(err);
@@ -37,7 +53,9 @@ async function createRecipe(e) {
 			'Content-Type': 'application/json',
 			'X-Authorization': token,
 		},
-	}).catch(err => console.log(err));
+	})
+		.then(page.redirect('/'))
+		.catch(err => console.log(err));
 }
 
 async function deleteRecipe(id) {

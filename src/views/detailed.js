@@ -4,11 +4,13 @@ import editRecipe from './edit-recipe.js';
 import {recipeApi} from '../api/recipe.js';
 
 const mainElement = document.querySelector('body main');
-const currUserId = sessionStorage.getItem('_userId');
 
-export default async function showDetails(id) {
-	const recipe = await recipeApi.getRecipeById(id);
-	const isOwner = currUserId != null && currUserId == recipe._ownerId;
+export default async function showDetails(ctx) {
+	const {recipeId} = ctx.params;
+
+	const recipe = await recipeApi.getRecipeById(recipeId);
+	const currUserId = sessionStorage.getItem('_userId');
+	const isOwner = !!currUserId != null && currUserId == recipe._ownerId;
 
 	render(template(recipe, isOwner), mainElement);
 }

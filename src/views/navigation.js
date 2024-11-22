@@ -1,12 +1,12 @@
 import {html, render} from 'https://unpkg.com/lit-html';
 
 const headerElement = document.querySelector('body header');
-const accessToken = sessionStorage.getItem('accessToken');
-
-const isLogged = !!accessToken;
 
 export default function renderNavigation(ctx, next) {
+	const accessToken = sessionStorage.getItem('accessToken');
+	const isLogged = !!accessToken;
 	render(template(isLogged), headerElement);
+	next();
 }
 
 const template = isLogged => html`

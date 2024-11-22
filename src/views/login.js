@@ -1,4 +1,5 @@
 import {html, render} from 'https://unpkg.com/lit-html';
+import page from '//unpkg.com/page/page.mjs';
 const mainElement = document.querySelector('body main');
 
 export default function login() {
@@ -37,7 +38,7 @@ function handleLogin(e) {
 			console.log(res);
 			sessionStorage.setItem('accessToken', res.accessToken);
 			sessionStorage.setItem('_userId', res._id);
-			window.location.href = '/';
+			page.redirect('/');
 		})
 		.catch(err => console.log(err));
 }

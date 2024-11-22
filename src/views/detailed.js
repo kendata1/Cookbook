@@ -1,22 +1,13 @@
 import {html, render} from 'https://unpkg.com/lit-html';
 import deleteRecipeById from '/views/delete.js';
 import editRecipe from './edit-recipe.js';
+import {recipeApi} from '../api/recipe.js';
 
 const mainElement = document.querySelector('body main');
-
-async function getRecipeById(id) {
-	try {
-		const response = await fetch(`http://localhost:3030/data/recipes/${id}`);
-		const recipe = await response.json();
-		return recipe;
-	} catch (err) {
-		console.log(err);
-	}
-}
 const currUserId = sessionStorage.getItem('_userId');
 
 export default async function showDetails(id) {
-	const recipe = await getRecipeById(id);
+	const recipe = await recipeApi.getRecipeById(id);
 	const isOwner = currUserId != null && currUserId == recipe._ownerId;
 
 	render(template(recipe, isOwner), mainElement);
@@ -52,10 +43,10 @@ const template = (recipe, isOwner) => html`
 	</article>
 `;
 
-function handleDelete(data) {
-	const confirmed = confirm(`Are you sure you want to delete ${data.name}?`);
+function handleDelete(recipe) {
+	const confirmed = confirm(`Are you sure you want to delete ${recipe.name}?`);
 	if (confirmed) {
-		deleteRecipeById(data._id);
+		deleteRecipeById(recipe._id);
 	}
 }
 

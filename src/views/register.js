@@ -1,4 +1,5 @@
 import {html, render} from 'https://unpkg.com/lit-html';
+import page from '//unpkg.com/page/page.mjs';
 const mainElement = document.querySelector('body main');
 
 const template = html` <article id="register-article">
@@ -37,7 +38,7 @@ function handleRegister(e) {
 		.then(res => {
 			sessionStorage.setItem('accessToken', res.accessToken);
 			sessionStorage.setItem('_userId', res._id);
-			window.location.href = '/';
+			page.redirect('/');
 		})
 		.catch(err => console.log(err));
 }

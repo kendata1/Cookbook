@@ -1,11 +1,11 @@
 import showDetails from './detailed.js';
+import {recipeApi} from '../api/recipe.js';
 import {html, render} from 'https://unpkg.com/lit-html';
 
-const url = 'http://localhost:3030/data/recipes';
 const mainElement = document.querySelector('body main');
 
 export default async function catalogPage() {
-	const recipes = await getRecipes();
+	const recipes = await recipeApi.getRecipes();
 	render(template(recipes), mainElement);
 }
 
@@ -25,16 +25,6 @@ const template = recipies => html`
 		)}
 	</section>
 `;
-
-async function getRecipes() {
-	try {
-		const result = await fetch(url);
-		const data = await result.json();
-		return data;
-	} catch {
-		err => console.log(err);
-	}
-}
 
 function detailsHandler(id) {
 	showDetails(id);

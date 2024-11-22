@@ -1,6 +1,6 @@
 import {html, render} from 'https://unpkg.com/lit-html';
+import {recipeApi} from '../api/recipe.js';
 
-const token = sessionStorage.getItem('accessToken');
 const mainElement = document.querySelector('body main');
 
 const template = html`<article>
@@ -8,16 +8,6 @@ const template = html`<article>
 </article>`;
 
 export default async function deleteRecipeById(id) {
-	try {
-		await fetch(`http://localhost:3030/data/recipes/${id}`, {
-			method: 'DELETE',
-			headers: {
-				'X-Authorization': token,
-			},
-		});
-
-		render(template, mainElement);
-	} catch {
-		console.error();
-	}
+	await recipeApi.deleteRecipe(id);
+	render(template, mainElement);
 }

@@ -1,4 +1,7 @@
 import {html, render} from 'https://unpkg.com/lit-html';
+import {recipeApi} from '../api/recipe.js';
+import page from '//unpkg.com/page/page.mjs';
+
 const mainElement = document.querySelector('body main');
 
 export default function editRecipe(recipe) {
@@ -39,25 +42,6 @@ ${recipe.steps.join('\n')}</textarea
 `;
 
 function formSubmitHandler(recipe, e) {
-	e.preventDefault();
-	const url = `http://localhost:3030/data/recipes/${recipe._id}`;
-
-	const form = e.currentTarget;
-	const formData = new FormData(form);
-
-	fetch(url, {
-		method: 'PUT',
-		body: JSON.stringify({
-			name: formData.get('name'),
-			img: formData.get('img'),
-			ingredients: formData.get('ingredients').split('\n'),
-			steps: formData.get('steps').split('\n'),
-		}),
-		headers: {
-			'Content-Type': 'application/json',
-			'X-Authorization': sessionStorage.getItem('accessToken'),
-		},
-	})
-		.then(() => (window.location.href = '/'))
-		.catch(err => console.log(err));
+	recipeApi.editRecipe(recipe, e);
+	page.redirect('/');
 }

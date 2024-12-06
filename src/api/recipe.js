@@ -12,9 +12,14 @@ export const recipeApi = {
 	getThreeMostRecentRecipies,
 };
 
-async function getRecipes() {
+async function getRecipes(filter) {
+	const searchParams = new URLSearchParams();
+
+	if (filter.search) {
+		searchParams.set('where', `name LIKE "${filter.search}"`);
+	}
 	try {
-		const result = await fetch(baseUrl);
+		const result = await fetch(`${baseUrl}?${searchParams.toString()}`);
 		const data = await result.json();
 		return data;
 	} catch {
